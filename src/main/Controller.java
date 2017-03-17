@@ -50,8 +50,8 @@ public class Controller {
 
                 if (poly != null) {
 
-                    poly.move(horizontal * speed, vertical * speed);
-                    poly.rotate(anticlockwise * rotspeed);
+                    if (horizontal != 0 || vertical != 0) poly.move(horizontal * speed, vertical * speed);
+                    if (anticlockwise != 0) poly.rotate(anticlockwise * rotspeed);
 
                     if (SeparatingAxisTheorem.isCollide(poly, testPoly)) gc.setFill(Color.RED);
                     else gc.setFill(Color.GREEN);

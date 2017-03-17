@@ -1,21 +1,30 @@
 package util;
 
 
-import com.sun.javafx.geom.Vec2d;
+public class Vector2D {
 
+    public double x;
+    public double y;
 
-public class Vector2D extends Vec2d {
-
-    public Vector2D() {
-        super();
-    }
+    public Vector2D() { }
 
     public Vector2D(double x, double y) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
     }
 
     public Vector2D(Vector2D v) {
-        super(v);
+        set(v);
+    }
+
+    public void set(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void set(Vector2D v) {
+        this.x = v.x;
+        this.y = v.y;
     }
 
     public void setZero() {
@@ -33,6 +42,30 @@ public class Vector2D extends Vec2d {
 
     public double getLengthSq() {
         return (x * x + y * y);
+    }
+
+    public double distanceSq(double vx, double vy) {
+        vx -= x;
+        vy -= y;
+        return (vx * vx + vy * vy);
+    }
+
+    public double distanceSq(Vector2D v) {
+        double vx = v.x - this.x;
+        double vy = v.y - this.y;
+        return (vx * vx + vy * vy);
+    }
+
+    public double distance(double vx, double vy) {
+        vx -= x;
+        vy -= y;
+        return Math.sqrt(vx * vx + vy * vy);
+    }
+
+    public double distance(Vector2D v) {
+        double vx = v.x - this.x;
+        double vy = v.y - this.y;
+        return Math.sqrt(vx * vx + vy * vy);
     }
 
     public double getAngle() {
@@ -124,15 +157,15 @@ public class Vector2D extends Vec2d {
         return v1.x * v2.x + v1.y * v2.y;
     }
 
-    public double crossProduct(Vector2D v) {
+    public double cross(Vector2D v) {
         return (this.x * v.y - this.y * v.x);
     }
 
-    public double crossProduct(double vx, double vy) {
+    public double cross(double vx, double vy) {
         return (this.x * vy - this.y * vx);
     }
 
-    public static double crossProduct(Vector2D v1, Vector2D v2) {
+    public static double cross(Vector2D v1, Vector2D v2) {
         return (v1.x * v2.y - v1.y * v2.x);
     }
 
@@ -194,6 +227,18 @@ public class Vector2D extends Vec2d {
     @Override
     public Vector2D clone() {
         return new Vector2D(x, y);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Vector2D) {
+            Vector2D v = (Vector2D) obj;
+            return (x == v.x) && (y == v.y);
+        }
+        return false;
     }
 
     @Override

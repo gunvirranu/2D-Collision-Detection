@@ -15,32 +15,9 @@ public class SeparatingAxisTheorem {
 
         // Narrow Phase Check
 
-        Polygon poly;
-
-        Vector2D p1 = new Vector2D();
-        Vector2D p2 = new Vector2D();
-
         Vector2D[] axes;
-        Vector2D[] axesA = new Vector2D[polyA.vertsNum];
-        Vector2D[] axesB = new Vector2D[polyB.vertsNum];
-
-        for (int k = 0; k < 2; k++) {
-            if (k == 0) poly = polyA;
-            else poly = polyB;
-
-            for (int i = 0; i < poly.vertsNum; i++) {
-
-                p1.set(poly.vertsX[i], poly.vertsY[i]);
-
-                int t = (i + 1 == poly.vertsNum ? 0 : i + 1);
-                p2.set(poly.vertsX[t], poly.vertsY[t]);
-
-                Vector2D edge = p1.getSubtracted(p2);
-                Vector2D normal = edge.getPerp();
-
-                (k == 0 ? axesA : axesB)[i] = normal;
-            }
-        }
+        Vector2D[] axesA = polyA.getNormals();
+        Vector2D[] axesB = polyB.getNormals();
 
         for (int k = 0; k < 2; k++) {
             if (k == 0) axes = axesA;

@@ -7,6 +7,8 @@ public class Polygon {
 
     public double[] vertsX, vertsY;
 
+    public Vector2D[] edges;
+
     public int vertsNum;
 
     public double minX, minY, maxX, maxY;
@@ -16,9 +18,11 @@ public class Polygon {
         this.vertsX = vertsX;
         this.vertsY = vertsY;
         this.vertsNum = vertsNum;
+        this.edges = new Vector2D[vertsNum];
 
         calcBoundingBox();
         calcCenter();
+        calcEdges();
     }
 
     public void move(double dx, double dy) {
@@ -27,12 +31,9 @@ public class Polygon {
             vertsX[i] += dx;
             vertsY[i] += dy;
         }
-        minX += dx;
-        minY += dy;
-        maxX += dx;
-        maxY += dy;
-        avgX += dx;
-        avgY += dy;
+        minX += dx; minY += dy;
+        maxX += dx; maxY += dy;
+        avgX += dx; avgY += dy;
     }
 
     public void rotate(double angle) {
@@ -47,6 +48,7 @@ public class Polygon {
         }
 
         calcBoundingBox();
+        calcEdges();
     }
 
     private void calcBoundingBox() {
@@ -59,5 +61,26 @@ public class Polygon {
     private void calcCenter() {
         avgX = Arrays.stream(vertsX).average().getAsDouble();
         avgY = Arrays.stream(vertsY).average().getAsDouble();
+    }
+
+    public void calcEdges() {
+
+        for (int i = 0; i < vertsNum; i++) {
+            int t = (i + 1 == vertsNum ? 0 : i + 1);
+
+            Vector2D edge = new Vector2D(vertsX[t] - vertsX[i], vertsY[t] - vertsY[i]);
+            edges[i] = edge;
+        }
+    }
+
+    public Vector2D[] getNormals() {
+
+        Vector2D[] normals = new Vector2D[vertsNum];
+
+        for (int i = 0; i < vertsNum; i++) {
+            normals[i] = edges[i].getPerp();
+        }
+
+        return normals;
     }
 }
