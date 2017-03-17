@@ -83,4 +83,20 @@ public class Polygon {
 
         return normals;
     }
+
+    public boolean isConvex() {
+
+        double z = edges[0].cross(edges[1]);
+        int clockwise = (z >= 0 ? 1 : -1);
+
+        for (int i = 1; i < vertsNum; i++) {
+            int t = (i + 1 == vertsNum ? 0 : i + 1);
+
+            z = edges[i].cross(edges[t]) * clockwise;
+
+            if (z < 0) return false;
+        }
+
+        return true;
+    }
 }
