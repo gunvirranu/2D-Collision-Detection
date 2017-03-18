@@ -1,7 +1,5 @@
 package util;
 
-import java.util.Arrays;
-
 
 public class Polygon {
 
@@ -52,15 +50,25 @@ public class Polygon {
     }
 
     private void calcBoundingBox() {
-        minX = Arrays.stream(vertsX).min().getAsDouble();
-        maxX = Arrays.stream(vertsX).max().getAsDouble();
-        minY = Arrays.stream(vertsY).min().getAsDouble();
-        maxY = Arrays.stream(vertsY).max().getAsDouble();
+        minX = maxX = vertsX[0];
+        minY = maxY = vertsY[0];
+        for (int i = 0; i < vertsNum; i++) {
+            if (vertsX[i] < minX) minX = vertsX[i];
+            if (vertsX[i] > maxX) maxX = vertsX[i];
+            if (vertsY[i] < minY) minY = vertsY[i];
+            if (vertsY[i] > maxY) maxY = vertsY[i];
+        }
     }
 
     private void calcCenter() {
-        avgX = Arrays.stream(vertsX).average().getAsDouble();
-        avgY = Arrays.stream(vertsY).average().getAsDouble();
+        double sumX = 0;
+        double sumY = 0;
+        for (int i = 0; i < vertsNum; i++) {
+            sumX += vertsX[i];
+            sumY += vertsY[i];
+        }
+        avgX = sumX / vertsNum;
+        avgY = sumY / vertsNum;
     }
 
     public void calcEdges() {
