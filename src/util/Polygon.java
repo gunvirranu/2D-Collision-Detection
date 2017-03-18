@@ -1,6 +1,9 @@
 package util;
 
 
+import java.util.ArrayList;
+
+
 public class Polygon {
 
     public int vertsNum;
@@ -104,14 +107,20 @@ public class Polygon {
     }
 
     public boolean isConvex() {
+        return (getConcaveVertices().size() == 0);
+    }
 
-        for (int i = 0; i < vertsNum; i++) {
+    public ArrayList<Integer> getConcaveVertices() {
 
+        ArrayList<Integer> concave = new ArrayList<>();
+
+        for (int i = 1; i < vertsNum; i++) {
             double z = edges[i].cross(edges[(i + 1) % vertsNum]);
             z *= clockwise;
 
-            if (z < 0) return false;
+            if (z < 0)
+                concave.add((i + 1) % vertsNum);
         }
-        return true;
+        return concave;
     }
 }
