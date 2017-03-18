@@ -49,7 +49,6 @@ public class Controller {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 if (poly != null) {
-
                     if (horizontal != 0 || vertical != 0) poly.move(horizontal * speed, vertical * speed);
                     if (anticlockwise != 0) poly.rotate(anticlockwise * rotspeed);
 
@@ -60,7 +59,6 @@ public class Controller {
                 }
 
                 drawTestPoly();
-
                 drawTempPoly();
             }
         };
@@ -103,7 +101,8 @@ public class Controller {
             if (event.getButton() == MouseButton.PRIMARY) {
                 tempX.add(event.getX());
                 tempY.add(event.getY());
-            } else if (event.getButton() == MouseButton.SECONDARY) {
+            }
+            else if (event.getButton() == MouseButton.SECONDARY) {
                 double[] xs = new double[tempX.size()];
                 double[] ys = new double[tempY.size()];
 

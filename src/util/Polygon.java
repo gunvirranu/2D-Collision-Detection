@@ -3,11 +3,13 @@ package util;
 
 public class Polygon {
 
+    public int vertsNum;
+
     public double[] vertsX, vertsY;
 
     public Vector2D[] edges;
 
-    public int vertsNum;
+    private int clockwise;
 
     public double minX, minY, maxX, maxY;
     public double avgX, avgY;
@@ -21,10 +23,10 @@ public class Polygon {
         calcBoundingBox();
         calcCenter();
         calcEdges();
+        calcClockwise();
     }
 
     public void move(double dx, double dy) {
-
         for (int i = 0; i < vertsNum; i++) {
             vertsX[i] += dx;
             vertsY[i] += dy;
@@ -71,40 +73,45 @@ public class Polygon {
         avgY = sumY / vertsNum;
     }
 
-    public void calcEdges() {
-
+    private void calcEdges() {
         for (int i = 0; i < vertsNum; i++) {
-            int t = (i + 1 == vertsNum ? 0 : i + 1);
-
-            Vector2D edge = new Vector2D(vertsX[t] - vertsX[i], vertsY[t] - vertsY[i]);
-            edges[i] = edge;
+            int t = (i + 1) % vertsNum;
+            edges[i] = new Vector2D(vertsX[t] - vertsX[i], vertsY[t] - vertsY[i]);
         }
     }
 
     public Vector2D[] getNormals() {
-
         Vector2D[] normals = new Vector2D[vertsNum];
-
         for (int i = 0; i < vertsNum; i++) {
             normals[i] = edges[i].getPerp();
         }
-
         return normals;
+    }
+
+    private void calcClockwise() {
+
+        int lowest = 0;
+        for (int i = 0; i < vertsNum; i++) {
+            if (vertsY[i] > vertsY[lowest])
+                lowest = i;
+            else if (vertsY[i] == vertsY[lowest])
+                lowest = (vertsX[lowest] > vertsX[i] ? lowest : i);
+        }
+
+        double z = edges[lowest].cross(edges[(lowest + 1) % vertsNum]);
+
+        clockwise = (z > 0 ? 1 : -1);
     }
 
     public boolean isConvex() {
 
-        double z = edges[0].cross(edges[1]);
-        int clockwise = (z >= 0 ? 1 : -1);
+        for (int i = 0; i < vertsNum; i++) {
 
-        for (int i = 1; i < vertsNum; i++) {
-            int t = (i + 1 == vertsNum ? 0 : i + 1);
-
-            z = edges[i].cross(edges[t]) * clockwise;
+            double z = edges[i].cross(edges[(i + 1) % vertsNum]);
+            z *= clockwise;
 
             if (z < 0) return false;
         }
-
         return true;
     }
 }
