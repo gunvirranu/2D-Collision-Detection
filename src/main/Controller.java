@@ -24,7 +24,8 @@ public class Controller {
 
     private GraphicsContext gc;
 
-    private Polygon testPoly = new Polygon(new double[]{500, 600, 600, 500}, new double[]{500, 500, 600, 600}, 4);
+//    private Polygon testPoly = new Polygon(new double[]{500, 600, 600, 500}, new double[]{500, 500, 600, 600}, 4);
+    private Polygon testPoly = new Polygon(new double[]{100, 200, 200, 100}, new double[]{100, 100, 200, 200}, 4);
     private Polygon poly;
 
     private final double speed = 8;

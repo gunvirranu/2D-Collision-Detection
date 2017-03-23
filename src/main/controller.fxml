@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
            xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
-    <children>
-        <Canvas fx:id="canvas" height="900.0" width="1400.0"/>
-    </children>
+    <!--<Canvas fx:id="canvas" height="900.0" width="1400.0"/>-->
+    <Canvas fx:id="canvas" height="500.0" width="700.0"/>
 </StackPane>
