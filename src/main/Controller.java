@@ -11,8 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import util.Polygon;
 
-import java.util.ArrayList;
-
 
 public class Controller {
 
@@ -24,54 +22,44 @@ public class Controller {
 
     private GraphicsContext gc;
 
-//    private Polygon testPoly = new Polygon(new double[]{500, 600, 600, 500}, new double[]{500, 500, 600, 600}, 4);
-    private Polygon testPoly = new Polygon(new double[]{100, 200, 200, 100}, new double[]{100, 100, 200, 200}, 4);
-    private Polygon poly;
+    private Polygon testPoly = new Polygon(
+            new double[]{100, 200, 200, 100},
+            new double[]{100, 100, 200, 200}, 4);
+    private Polygon poly = new Polygon(new double[0], new double[0], 0);
 
     private final double speed = 8;
-    private final double rotspeed = Math.PI / 90;
+    private final double rotSpeed = Math.PI / 90;
     private int vertical, horizontal;
     private int anticlockwise;
-    private ArrayList<Double> tempX = new ArrayList<>();
-    private ArrayList<Double> tempY = new ArrayList<>();
 
     @FXML
     void initialize() {
-
         canvas.setFocusTraversable(true);
         gc = canvas.getGraphicsContext2D();
-
         initCanvasEvents();
 
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
                 if (poly != null) {
                     if (horizontal != 0 || vertical != 0)
                         poly.move(horizontal * speed, vertical * speed);
                     if (anticlockwise != 0)
-                        poly.rotate(anticlockwise * rotspeed);
-
+                        poly.rotate(anticlockwise * rotSpeed);
                     if (SeparatingAxisTheorem.isCollide(poly, testPoly))
                         gc.setFill(Color.RED);
                     else
                         gc.setFill(Color.GREEN);
-
                     drawPoly();
                 }
-
                 drawTestPoly();
-                drawTempPoly();
             }
         };
         animationTimer.start();
     }
 
-    void drawPoly() {
-
+    private void drawPoly() {
         gc.fillPolygon(poly.vertsX, poly.vertsY, poly.vertsNum);
 
         gc.setStroke(Color.BLACK);
@@ -81,45 +69,28 @@ public class Controller {
         gc.fillOval(poly.avgX - 4, poly.avgY - 4, 4, 4);
     }
 
-    void drawTestPoly() {
+    private void drawTestPoly() {
         gc.setFill(Color.ROYALBLUE);
         gc.fillPolygon(testPoly.vertsX, testPoly.vertsY, testPoly.vertsNum);
     }
 
-    void drawTempPoly() {
-
-        double[] xs = new double[tempX.size()];
-        double[] ys = new double[tempY.size()];
-
-        for (int i = 0; i < tempX.size(); i++) {
-            xs[i] = tempX.get(i);
-            ys[i] = tempY.get(i);
-        }
-
-        gc.setFill(Color.BLACK);
-        gc.fillPolygon(xs, ys, xs.length);
-    }
-
-    void initCanvasEvents() {
+    private void initCanvasEvents() {
 
         canvas.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                tempX.add(event.getX());
-                tempY.add(event.getY());
-            }
-            else if (event.getButton() == MouseButton.SECONDARY) {
-                double[] xs = new double[tempX.size()];
-                double[] ys = new double[tempY.size()];
-
-                for (int i = 0; i < tempX.size(); i++) {
-                    xs[i] = tempX.get(i);
-                    ys[i] = tempY.get(i);
+                double[] xs = new double[poly.vertsNum+1];
+                double[] ys = new double[poly.vertsNum+1];
+                for (int i = 0; i < poly.vertsNum; i++) {
+                    xs[i] = poly.vertsX[i];
+                    ys[i] = poly.vertsY[i];
                 }
-
+                xs[xs.length-1] = event.getX();
+                ys[ys.length-1] = event.getY();
                 poly = new Polygon(xs, ys, xs.length);
-
-                tempX.clear();
-                tempY.clear();
+            }
+            if (event.getButton() == MouseButton.SECONDARY) {
+                testPoly = poly;
+                poly = new Polygon(new double[0], new double[0], 0);
             }
         });
 

@@ -1,6 +1,8 @@
 package util;
 
 
+import collision.Partitioner;
+
 import java.util.ArrayList;
 
 
@@ -9,7 +11,8 @@ public class Polygon {
     public int vertsNum;
     public double[] vertsX, vertsY;
 
-    public ArrayList<ConvexPoly> subPolys = new ArrayList<>();
+    private Partitioner partitioner;
+    public ArrayList<ConvexPoly> subPolys;
 
     public double minX, minY, maxX, maxY;
     public double avgX, avgY;
@@ -18,12 +21,16 @@ public class Polygon {
         this.vertsX = vertsX;
         this.vertsY = vertsY;
         this.vertsNum = vertsNum;
+        this.partitioner = new Partitioner(this);
 
-        // workaround, only still works with convex polygons
-        subPolys.add(new ConvexPoly(vertsX, vertsY, vertsNum));
+        // TODO: workaround, only still works with convex polygons
+        this.partition();
+        this.calcBoundingBox();
+        this.calcCenter();
+    }
 
-        calcBoundingBox();
-        calcCenter();
+    private void partition() {
+        this.subPolys = partitioner.partitionPolygon();
     }
 
     public void move(double dx, double dy) {
@@ -44,7 +51,6 @@ public class Polygon {
             if (poly.minY < minY) minY = poly.minY;
             if (poly.maxY > maxY) maxY = poly.maxY;
         }
-
     }
 
     public void rotate(double angle) {

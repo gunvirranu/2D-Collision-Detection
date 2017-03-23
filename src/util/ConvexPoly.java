@@ -9,7 +9,7 @@ public class ConvexPoly {
     public Vector2D[] edges;
     public Vector2D[] normals;
 
-    private int clockwise;
+    public int clockwise;
     public double minX, minY, maxX, maxY;
     public double avgX, avgY;
 
@@ -37,7 +37,6 @@ public class ConvexPoly {
     }
 
     public void rotate(double angle, double x, double y) {
-
         double s = Math.sin(angle);
         double c = Math.cos(angle);
 
@@ -52,8 +51,10 @@ public class ConvexPoly {
     }
 
     private void calcBoundingBox() {
-        minX = maxX = vertsX[0];
-        minY = maxY = vertsY[0];
+        if (vertsNum > 0) {
+            minX = maxX = vertsX[0];
+            minY = maxY = vertsY[0];
+        }
         for (int i = 0; i < vertsNum; i++) {
             if (vertsX[i] < minX) minX = vertsX[i];
             if (vertsX[i] > maxX) maxX = vertsX[i];
@@ -95,7 +96,9 @@ public class ConvexPoly {
             else if (vertsY[i] == vertsY[lowest])
                 lowest = (vertsX[lowest] > vertsX[i] ? lowest : i);
         }
-        double z = edges[(((lowest - 1) % vertsNum) + vertsNum) % vertsNum].cross(edges[lowest]);
-        clockwise = (z > 0 ? 1 : -1);
+        if (vertsNum > 0) {
+            double z = edges[(((lowest - 1) % vertsNum) + vertsNum) % vertsNum].cross(edges[lowest]);
+            clockwise = (z > 0 ? 1 : -1);
+        }
     }
 }
