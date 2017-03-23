@@ -50,11 +50,15 @@ public class Controller {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 if (poly != null) {
-                    if (horizontal != 0 || vertical != 0) poly.move(horizontal * speed, vertical * speed);
-                    if (anticlockwise != 0) poly.rotate(anticlockwise * rotspeed);
+                    if (horizontal != 0 || vertical != 0)
+                        poly.move(horizontal * speed, vertical * speed);
+                    if (anticlockwise != 0)
+                        poly.rotate(anticlockwise * rotspeed);
 
-                    if (SeparatingAxisTheorem.isCollide(poly, testPoly)) gc.setFill(Color.RED);
-                    else gc.setFill(Color.GREEN);
+                    if (SeparatingAxisTheorem.isCollide(poly, testPoly))
+                        gc.setFill(Color.RED);
+                    else
+                        gc.setFill(Color.GREEN);
 
                     drawPoly();
                 }
@@ -70,7 +74,7 @@ public class Controller {
 
         gc.fillPolygon(poly.vertsX, poly.vertsY, poly.vertsNum);
 
-        gc.setFill(Color.BLACK);
+        gc.setStroke(Color.BLACK);
         gc.strokeRect(poly.minX, poly.minY, poly.maxX - poly.minX, poly.maxY - poly.minY);
 
         gc.setFill(Color.BLUE);
