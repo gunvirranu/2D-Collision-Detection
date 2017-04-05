@@ -1,6 +1,5 @@
 package collision;
 
-import util.ConvexPoly;
 import util.Polygon;
 import util.Vector2D;
 
@@ -8,56 +7,68 @@ import java.util.ArrayList;
 
 public class Partitioner {
 
-    private Polygon polygon;
-    // TODO: hacky non-convex ConvexPoly object for calculations
-    private ArrayList<ConvexPoly> subPolys = new ArrayList<>();
-    private ConvexPoly nonConvexConvex;
+    private Polygon poly;
 
-    private Vector2D[] partitionEdges;
+    public Vector2D[] partitionEdges;
+    public Vector2D[] partitionNormals;
+
+    public int[] concaveVerts;
+    public int[] partitionMap;
 
     public Partitioner(Polygon polygon) {
-        this.polygon = polygon;
-        this.nonConvexConvex = new ConvexPoly(polygon.vertsX, polygon.vertsY, polygon.vertsNum);
+        this.poly = polygon;
     }
 
-    public ArrayList<ConvexPoly> partitionPolygon() {
-        subPolys.add(new ConvexPoly(polygon.vertsX, polygon.vertsY, polygon.vertsNum));
-        return subPolys;
+    public void partitionPolygon() {
+        this.calcConcaveVertices();
+        this.calcPartitions();
+        this.calcPartitionNormals();
     }
 
-    private ArrayList<Integer> getConcaveVertices() {
-        ArrayList<Integer> concave = new ArrayList<>();
-        for (int i = 1; i < polygon.vertsNum; i++) {
-            double z = nonConvexConvex.edges[i].cross(nonConvexConvex.edges[(i + 1) % nonConvexConvex.vertsNum]);
-            z *= nonConvexConvex.clockwise;
+    private void calcConcaveVertices() {
+        ArrayList<Integer> conc = new ArrayList<>();
+        for (int i = 1; i < poly.vertsNum; i++) {
+            double z = poly.edges[i].cross(poly.edges[(i + 1) % poly.vertsNum]);
+            z *= poly.clockwise;
             if (z < 0)
-                concave.add((i + 1) % nonConvexConvex.vertsNum);
+                conc.add((i + 1) % poly.vertsNum);
         }
-        return concave;
+        concaveVerts = new int[conc.size()];
+        for (int i = 0; i < conc.size(); i++) {
+            concaveVerts[i] = conc.get(i);
+        }
     }
 
-
-    private void calcPartitionEdges() {
+    private void calcPartitions() {
         ArrayList<Vector2D> partEdges = new ArrayList<>();
-        for (int vert : getConcaveVertices()) {
+        ArrayList<Integer> edgeMap = new ArrayList<>();
+
+        // TODO: No idea if this algorithm works for all cases lmao don't think it does...
+        for (int vert : this.concaveVerts) {
             // cause java doesn't like modulo lmao
-            Vector2D startEdge = nonConvexConvex.edges[(((vert - 1) % nonConvexConvex.vertsNum) + nonConvexConvex.vertsNum) % nonConvexConvex.vertsNum];
-            Vector2D partEdge = nonConvexConvex.edges[vert];
+            Vector2D startEdge = poly.edges[(((vert - 1) % poly.vertsNum) + poly.vertsNum) % poly.vertsNum];
+            Vector2D partEdge = poly.edges[vert];
             int i = vert;
-            while (nonConvexConvex.clockwise * startEdge.cross(partEdge) < 0) {
-                i = (i + 1) % nonConvexConvex.vertsNum;
-                partEdge.add(nonConvexConvex.edges[i]);
+            while (poly.clockwise * startEdge.cross(partEdge) < 0) {
+                i = (i + 1) % poly.vertsNum;
+                partEdge.add(poly.edges[i]);
             }
+            edgeMap.add(i);
             partEdges.add(partEdge);
         }
-        partitionEdges = partEdges.toArray(new Vector2D[0]);
+
+        partitionEdges = new Vector2D[partEdges.size()];
+        partitionMap = new int[partitionEdges.length];
+        for (int i = 0; i < partEdges.size(); i++) {
+            partitionEdges[i] = partEdges.get(i);
+            partitionMap[i] = edgeMap.get(i);
+        }
     }
 
-    public Vector2D[] getPartitionNormals() {
-        Vector2D[] partNormals = new Vector2D[partitionEdges.length];
+    private void calcPartitionNormals() {
+        partitionNormals = new Vector2D[partitionEdges.length];
         for (int i = 0; i < partitionEdges.length; i++) {
-            partNormals[i] = partitionEdges[i].getPerp();
+            partitionNormals[i] = partitionEdges[i].getPerp();
         }
-        return partNormals;
     }
 }

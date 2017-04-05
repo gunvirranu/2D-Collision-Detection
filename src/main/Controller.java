@@ -67,6 +67,13 @@ public class Controller {
 
         gc.setFill(Color.BLUE);
         gc.fillOval(poly.avgX - 4, poly.avgY - 4, 4, 4);
+
+        gc.setStroke(Color.BLUE);
+        for (int i = 0; i < poly.partitioner.concaveVerts.length; i++) {
+            int start = poly.partitioner.concaveVerts[i];
+            int end = poly.partitioner.partitionMap[i];
+            gc.strokeLine(poly.vertsX[start], poly.vertsY[start], poly.vertsX[end], poly.vertsY[end]);
+        }
     }
 
     private void drawTestPoly() {
